@@ -11,13 +11,21 @@ const contactContent =
 
 const app = express();
 const pages = ["Home", "About", "Contact", "Compose"];
+let posts = [];
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get("/", function (req, res) {
-  res.render("home", { pageTitle: pages[0], content: homeStartingContent });
+  if (posts.length === 0){
+    res.render("home", { pageTitle: pages[0], content: homeStartingContent, postArray: posts });
+  }else{
+    console.log(posts[0].body, posts[0].title);
+    res.render("home", { pageTitle: posts[0].title, content: posts[0].body, postArray: posts });
+  }
+  
+  
 });
 
 app.get("/about", function (req, res) {
@@ -33,9 +41,12 @@ app.get("/compose", function (req, res) {
 });
 
 app.post("/compose", function (req, res) {
-  const title = req.body.postTitle;
-  console.log(title);
-  res.redirect("/compose");
+const post={
+title: req.body.postTitle,
+body: req.body.postBody
+};
+  posts.push(post);
+  res.redirect("/");
 });
 
 app.listen(3000, function () {

@@ -3,12 +3,12 @@
 <form action="/compose" method="post" class="">
     <div class="form-group"> 
       <label for="postTitle" class="form-label">Title</label>
-      <input type="text" class="form-control" id="postTitle"/>
+      <input type="text" class="form-control" id="postTitle" name="postTitle"/>
     </div>
  
      <div class="form-group"> 
         <label for="postDescription" class="form-label">Post</label>
-        <textarea id="postDescription" class="form-control" rows="5" cols="30"></textarea>
+        <textarea id="postDescription" class="form-control" rows="5" cols="30" name="postBody"></textarea>
       </div>
 
   <button type="submit" name="title" class="btn btn-primary">Publish</button>
