@@ -2,8 +2,9 @@
 <h1><%= pageTitle %></h1>
 <p><%= content %></p>
 
-<% for(let i=0; i<postArray.length; i++){ %>
-    <h1><%= postArray[i].title %></h1>
-      <p><%= postArray[i].body %></p>
-  <%}%>
+<% postArray.forEach(post => { %>
+  <h1><%= post.title %></h1>
+  <p><%= post.body %></p>
+  <%});%>
+
 <%- include("partials/footer") -%>

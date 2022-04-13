@@ -18,12 +18,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 app.get("/", function (req, res) {
-  if (posts.length === 0){
+  //if (posts.length === 0){
     res.render("home", { pageTitle: pages[0], content: homeStartingContent, postArray: posts });
-  }else{
-    console.log(posts[0].body, posts[0].title);
-    res.render("home", { pageTitle: posts[0].title, content: posts[0].body, postArray: posts });
-  }
+  //}else{
+  //  console.log(posts[0].body, posts[0].title);
+  //  res.render("home", { pageTitle: pages[0], content: homeStartingContent, postArray: posts });
+ //}
   
   
 });
@@ -38,6 +38,10 @@ app.get("/contact", function (req, res) {
 
 app.get("/compose", function (req, res) {
   res.render("compose", { pageTitle: pages[3] });
+});
+
+app.get("/posts/:postName", (req, res) => {
+  console.log(req.params.postName);
 });
 
 app.post("/compose", function (req, res) {
