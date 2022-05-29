@@ -13,7 +13,7 @@ const contactContent =
 
 const app = express();
 const pages = ["Home", "About", "Contact", "Compose"];
-let posts = [];
+//let posts = [];
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,10 +32,19 @@ const blogSchema = new mongoose.Schema({
 const Post = mongoose.model("Post", blogSchema);
 
 app.get("/", function (req, res) {
-  res.render("home", {
-    pageTitle: pages[0],
-    content: homeStartingContent,
-    postArray: posts,
+  Post.find({}, function (err, posts) {
+    if (err) {
+      console.log(err);
+    } else {
+      posts.forEach((post) => {
+        // console.log(post.title, post.body);
+      });
+      res.render("home", {
+        pageTitle: pages[0],
+        content: homeStartingContent,
+        postArray: posts,
+      });
+    }
   });
 });
 
@@ -51,24 +60,15 @@ app.get("/compose", function (req, res) {
   res.render("compose", { pageTitle: pages[3] });
 });
 
-app.get("/posts/:postName", (req, res) => {
-  const requestedTitle = _.lowerCase(req.params.postName);
+app.get("/posts/:postId", (req, res) => {
+  const requestedPostId = req.params.postId;
 
-  posts.forEach((post) => {
-    const storedTitle = _.lowerCase(post.title);
-
-    if (storedTitle === requestedTitle) {
-      console.log("Match found!");
-      res.render("post", {
-        postObjectTitle: post.title,
-        postObjectBody: post.body,
-      });
-    } else {
-      console.log("Something is wrong!");
-      console.log(requestedTitle);
-    }
+  Post.findOne({ _id: requestedPostId }, function (err, post) {
+    res.render("post", {
+      postObjectTitle: post.title,
+      postObjectBody: post.body,
+    });
   });
-  res.render("post", { pageTitle: posts.title, postArray: posts });
 });
 
 app.post("/compose", function (req, res) {
@@ -85,11 +85,11 @@ app.post("/compose", function (req, res) {
   });
 
   // saving post data in blogDB
-  newPost.save();
-
-  console.log(post.title, post.body);
-  posts.push(post);
-  res.redirect("/");
+  newPost.save(function (err) {
+    if (!err) {
+      res.redirect("/");
+    }
+  });
 });
 
 app.listen(3000, function () {
