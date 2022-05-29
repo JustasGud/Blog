@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const mongoose = require("mongoose");
 const _ = require("lodash");
 
 const homeStartingContent =
@@ -17,6 +18,18 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+// adding mongo db connection to blogDB
+mongoose.connect("mongodb://localhost:27017/blogDB");
+
+// creating blog shema
+const blogSchema = new mongoose.Schema({
+  title: String,
+  body: String,
+});
+
+// creating post model
+const Post = mongoose.model("Post", blogSchema);
 
 app.get("/", function (req, res) {
   res.render("home", {
@@ -59,10 +72,22 @@ app.get("/posts/:postName", (req, res) => {
 });
 
 app.post("/compose", function (req, res) {
+  // collection info from the end user about post title and body
   const post = {
     title: req.body.postTitle,
     body: req.body.postBody,
   };
+
+  // creating new document in blogDB based on end user input
+  const newPost = new Post({
+    title: post.title,
+    body: post.body,
+  });
+
+  // saving post data in blogDB
+  newPost.save();
+
+  console.log(post.title, post.body);
   posts.push(post);
   res.redirect("/");
 });
